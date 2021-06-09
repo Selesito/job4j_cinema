@@ -12,7 +12,7 @@ public interface Store {
 
     Account saveAccount(Account account);
 
-    Ticket saveTicket(Ticket ticket);
+    boolean saveTicket(Ticket ticket);
 
     Account findByIdAccount(String phone, String email) throws SQLException;
 }

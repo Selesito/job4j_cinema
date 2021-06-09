@@ -20,15 +20,17 @@
     <title>Купить ещё...</title>
     <script>
         $(document).ready(function() {
-            let storedData = sessionStorage.getItem("place");
-            let data = JSON.parse(storedData);
-            let count = 0;
-            $.each(data, function(index, value) {
-                if (count === 0) {
-                    document.getElementById("payment").innerHTML += "<h4>Вы купили билет:</h4>";
+
+            $.ajax({
+                type: 'GET',
+                url: 'http://localhost:8080/job4j_cinema_war_exploded/pay',
+                dataType: 'json'
+            }).done(function (data) {
+                for (let i = 0; i < data.length; i++) {
+                    document.getElementById("payment").innerHTML += "<h4 style=\"color:#800000\">" + data[i]+ "</h4>";
                 }
-                document.getElementById("payment").innerHTML += "<h4 style=\"color:#800000\">" + value + "</h4>";
-                count++;
+            }).fail(function (err) {
+                alert(err);
             });
         });
     </script>

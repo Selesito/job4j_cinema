@@ -98,7 +98,8 @@ public class PsqlStore implements Store {
         return account;
     }
 
-    public Ticket saveTicket(Ticket ticket) {
+    public boolean saveTicket(Ticket ticket) {
+        boolean result = false;
         try (Connection cn = pool.getConnection();
              PreparedStatement ps = cn.prepareStatement(
                      "INSERT INTO ticket("
@@ -111,10 +112,11 @@ public class PsqlStore implements Store {
             ps.setInt(4, ticket.getCell());
             ps.setInt(5, ticket.getAccountId());
             ps.execute();
+            result = true;
         } catch (Exception e) {
             LOG.error("Exception in log example", e);
         }
-        return ticket;
+        return result;
     }
 
     @Override
