@@ -17,35 +17,16 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
             integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" ></script>
-    <title>Купить ещё...</title>
-    <script>
-        $(document).ready(function() {
-            let storedData = sessionStorage.getItem("place");
-            let data = JSON.parse(storedData);
-            let count = 0;
-            $.each(data, function(index, value) {
-                if (count === 0) {
-                    document.getElementById("payment").innerHTML += "<h4>Вы купили билет:</h4>";
-                }
-                document.getElementById("payment").innerHTML += "<h4 style=\"color:#800000\">" + value + "</h4>";
-                count++;
-            });
-        });
-    </script>
+    <title>Место занято...</title>
 </head>
 <body>
 <div class="container">
-    <div class="row pt-3">
-        <div id="payment">
-        </div>
-    </div>
     <div class="row">
         <form action="index.jsp" method="post">
             <div class="form-group">
-                <h6 style="color: darkgray">Оплата произведена!</h6>
-                <label>Купить ещё...</label>
+                <h4 style="color: darkred">Место уже занято, попробуйте ещё раз!</h4>
             </div>
-            <button type="submit" class="btn btn-success" >Купить</button>
+            <button type="submit" class="btn btn-success" >Попробовать еще!</button>
         </form>
     </div>
 </div>

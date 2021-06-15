@@ -15,4 +15,6 @@ public interface Store {
     boolean saveTicket(Ticket ticket);
 
     Account findByIdAccount(String phone, String email) throws SQLException;
+
+    Ticket findByTicket(int row, int cell) throws SQLException;
 }

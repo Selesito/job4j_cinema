@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 
 public class PayServlet extends HttpServlet {
-    private List<String> buy = new ArrayList<>();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -38,7 +36,6 @@ public class PayServlet extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        buy.clear();
         String places = req.getParameter("places");
         JSONObject objJSON = new JSONObject(places);
         HashMap<String, Object> res = new HashMap<>();
@@ -47,6 +44,8 @@ public class PayServlet extends HttpServlet {
             String key = itr.next().toString();
             res.put(key, objJSON.get(key));
         }
+        boolean free = true;
+        List<Ticket> buy = new ArrayList<>();
         for (Object rs : res.keySet()) {
             String[] rowCell = (rs.toString()).split("");
             int row = Integer.parseInt(rowCell[0]);
@@ -57,27 +56,24 @@ public class PayServlet extends HttpServlet {
                     row,
                     cell,
                     account.getId());
-            boolean result = PsqlStore.instOf().saveTicket(ticket);
-            if (result) {
-                String place = "Билет на Ряд " + row + ", Место " + cell + " успешно куплен!";
-                buy.add(place);
-            } else {
-                String place = "Билет на Ряд " + row + ", Место " + cell
-                        + " уже зарезервировано, выберите другое место!";
-                buy.add(place);
+            try {
+                if (PsqlStore.instOf().findByTicket(row, cell) != null) {
+                    free = false;
+                } else {
+                    buy.add(ticket);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
-        this.getServletContext().getRequestDispatcher("/result.jsp").forward(req, resp);
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws IOException {
-        resp.setContentType("text/plain");
-        resp.setCharacterEncoding("UTF-8");
-        PrintWriter writer = resp.getWriter();
-        JSONArray json  = new JSONArray(buy);
-        writer.println(json);
-        writer.flush();
+        if (free) {
+            for (Ticket ticket : buy) {
+                PsqlStore.instOf().saveTicket(ticket);
+            }
+        } else {
+            this.getServletContext().getRequestDispatcher("/error.jsp").forward(req, resp);
+        }
+        buy.clear();
+        resp.sendRedirect(req.getContextPath() + "/result.jsp");
     }
 }

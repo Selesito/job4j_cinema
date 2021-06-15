@@ -143,4 +143,32 @@ public class PsqlStore implements Store {
             return account;
         }
     }
+
+    @Override
+    public Ticket findByTicket(int row, int cell) {
+        Ticket ticket = null;
+        try (Connection cn = pool.getConnection();
+             PreparedStatement ps = cn.prepareStatement(
+                     "SELECT * FROM ticket WHERE row = (?) and cell = (?)")
+        ) {
+            ps.setInt(1, row);
+            ps.setInt(2, cell);
+            try (ResultSet ids = ps.executeQuery()) {
+                if (ids.next()) {
+                    ticket = new Ticket(
+                            ids.getInt("id"),
+                            ids.getInt("session_id"),
+                            ids.getInt("row"),
+                            ids.getInt("cell"),
+                            ids.getInt("account_id")
+                    );
+                }
+            } catch (Exception e) {
+                LOG.error("Exception in log example", e);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ticket;
+    }
 }
