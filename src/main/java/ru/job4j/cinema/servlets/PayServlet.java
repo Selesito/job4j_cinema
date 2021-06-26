@@ -26,16 +26,8 @@ public class PayServlet extends HttpServlet {
         String email = req.getParameter("email");
         String username = req.getParameter("username");
         String phone = req.getParameter("phone");
-        Account account = null;
-        try {
-            account = PsqlStore.instOf().findByIdAccount(phone, email);
-            if (account == null) {
-                account = PsqlStore.instOf().saveAccount(new Account(0,
-                        username, email, phone));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        Account account = PsqlStore.instOf().saveAccount(new Account(0,
+                username, email, phone));
         String places = req.getParameter("places");
         JSONObject objJSON = new JSONObject(places);
         HashMap<String, Object> res = new HashMap<>();
